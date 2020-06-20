@@ -4,9 +4,7 @@
 
 | *    | NAME          | USE      | PLANTFORM | LINK                                                         |
 | :--- | ------------- | -------- | --------- | ------------------------------------------------------------ |
-| 1    | autoReconnect | 自动拨号 | Windows   | [CLICK](https://github.com/magicwenli/scripts/autoReconnect) |
-|      |               |          |           |                                                              |
-|      |               |          |           |                                                              |
+| 1    | autoReconnect | 自动拨号 | Windows   | [CLICK](https://github.com/magicwenli/scripts/tree/master/autoReconnect) |
 
 ## 说明
 
