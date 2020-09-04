@@ -21,13 +21,21 @@
 
 <details>
 ```
+  
 1. Ping 网关地址，检测是否已拨号。
+  
 	1.1 Ping 失败，转到 3
+  
 	1.2 Ping 成功，转到 2
+  
 2. 延时等待 600 秒，转到 1
+  
 3. 断开全部连接，重新拨号并 Ping 网关检测连接状态
+  
 	3.1 Ping 失败，延时 100 秒，转到 3；累计10次失败重启系统
+  
 	3.2 Ping 成功，延时 300 秒，转到 1
+  
 ```
 </details>
 
@@ -95,6 +103,3 @@ Forked from [JerryYang666/XJTU-DHA-auto-complete](https://github.com/JerryYang66
 #### 定时任务
 
 打开`addSchTask.bat`即可自动添加上午和下午的定时任务。
-
-
-```
