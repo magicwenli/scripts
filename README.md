@@ -2,10 +2,11 @@
 
 ## 列表
 
-| *    | NAME              | USE             | PLANTFORM | LINK                                                         |
-| :--- | ----------------- | --------------- | --------- | ------------------------------------------------------------ |
-| 1    | autoReconnect     | 自动拨号        | Windows   | [CLICK](https://github.com/magicwenli/scripts/tree/master/autoReconnect) |
-| 2    | qbittorrentBackup | qbittorrent备份 | Windows   | [CLICK](https://github.com/magicwenli/scripts/tree/master/qbittorrentBackup) |
+| *    | NAME              | USE             | PLANTFORM      | LINK                                                         |
+| :--- | ----------------- | --------------- | -------------- | ------------------------------------------------------------ |
+| 1    | autoReconnect     | 自动拨号        | Windows        | [CLICK](https://github.com/magicwenli/scripts/tree/master/autoReconnect) |
+| 2    | qbittorrentBackup | qbittorrent备份 | Windows        | [CLICK](https://github.com/magicwenli/scripts/tree/master/qbittorrentBackup) |
+| 3    | healthCheck       | 健康每日报check | Windows/Chrome | [CLICK](https://github.com/magicwenli/scripts/tree/master/healthCheck) |
 
 ## 说明
 
@@ -58,4 +59,18 @@
 timeout /nobreak /t 20
 shutdown -r -t 20
 ```
+
+### 3. healthCheck
+
+Forked from [JerryYang666/XJTU-DHA-auto-complete](https://github.com/JerryYang666/XJTU-DHA-auto-complete). win7 x86 下测试通过。
+
+#### 环境
+
+- python(selenium)
+- chrome
+- chromedriver([Here](https://chromedriver.storage.googleapis.com/index.html))
+
+#### 定时任务
+
+打开`addSchTask.bat`即可添加上午和下午的定时任务。
 
