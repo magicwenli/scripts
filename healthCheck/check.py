@@ -19,7 +19,7 @@ import time,random,logging,os
 
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
-cpath=os.path.dirname(os.path.realpath(__file__))+"\check.log"
+cpath=os.path.dirname(os.path.realpath(__file__))+"\\check.log"
 print(cpath)
 
 logging.basicConfig(filename=cpath,filemode='a',level=logging.INFO,format=LOG_FORMAT)

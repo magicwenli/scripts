@@ -3,9 +3,10 @@
 ## 列表
 
 | *    | NAME              | USE             | PLANTFORM      | LINK                                                         |
-| :--- | ----------------- | --------------- | -------------- | ------------------------------------------------------------ |
+| :--- | :---------------- | --------------- | -------------- | ------------------------------------------------------------ |
 | 1    | autoReconnect     | 自动拨号        | Windows        | [CLICK](https://github.com/magicwenli/scripts/tree/master/autoReconnect) |
-| 2    | qbittorrentBackup | qbittorrent备份 | Windows        | [CLICK](https://github.com/magicwenli/scripts/tree/master/qbittorrentBackup) |
+| 2    | qbBackup          | qbittorrent备份 | Windows        | [CLICK](https://github.com/magicwenli/scripts/tree/master/qbBackup) |
+| 2.a  | qbittorrentBackup | qbittorrent备份 | Windows        | [CLICK](https://github.com/magicwenli/scripts/tree/master/qbittorrentBackup) |
 | 3    | healthCheck       | 健康每日报check | Windows/Chrome | [CLICK](https://github.com/magicwenli/scripts/tree/master/healthCheck) |
 
 ## 说明
@@ -34,9 +35,32 @@
 	3.2 Ping 成功，延时 300 秒，转到 1
 ```
 
-### 2. qbittorrentBackup
+### 2. qbBackup
 
-这是一个自动备份`qbittorrent`配置文件的脚本。
+这是一个自动备份`QBittorrent`配置文件的脚本。
+
+每天通过任务计划定时启动Backup.bat，可以有效避免因NAS断电导致`QBittorrent`文件丢失的问题。
+
+#### 备份方法
+
+- 编辑`qbBackup/Backup.py`，修改`maxBackups=15`为欲保存的最大备份数。
+
+- 执行`addSchTask.bat`添加计划任务（中午、午夜各执行 1 次）
+
+#### 恢复方法
+
+- 打开`qbBackup/Backups`目录
+- 将欲恢复的备份拖放至`qbBackup/Restore.bat`上即可。
+
+**注意**：恢复备份时`QBittorrent`需要在停止运行状态。
+
+#### 便携版
+
+需要修改`qbBackup/Backup.py`中的`backPath`参数以适应便携版。
+
+### 2.a qbittorrentBackup
+
+> 这个版本是批处理版，只能保存两个备份。由于CMD功能限制，增加更多备份的功能不便实现。所以现在使用python版，旧版弃用，保存以待观瞻学习。
 
 每天通过任务计划定时启动Backup.bat，可以有效避免因NAS断电导致`qbittorrent`显示文件丢失的问题。
 
@@ -47,8 +71,7 @@
    即脚本最多只会保留两次备份的文件。
 
 2. 双击执行Restore.bat，如果有Backup备份，则会优先从Backup中还原；否则再去查找是否有
-   Backup.old备份，如果有则从Backup.old中还原；如果两个备份都没有，则会提示没有可用的备份
-   并退出。
+   Backup.old备份，如果有则从Backup.old中还原；如果两个备份都没有，则会提示没有可用的备份并退出。
 
 这个脚本是在互联网上找到的，年限久远，作者未知，但非常有用。
 
@@ -59,7 +82,6 @@
 timeout /nobreak /t 20
 shutdown -r -t 20
 ```
-
 ### 3. healthCheck
 
 Forked from [JerryYang666/XJTU-DHA-auto-complete](https://github.com/JerryYang666/XJTU-DHA-auto-complete). win7 x86 下测试通过。
