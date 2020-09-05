@@ -91,6 +91,7 @@ Forked from [JerryYang666/XJTU-DHA-auto-complete](https://github.com/JerryYang66
 - 增加日志
 - 通过批处理添加每日签到的计划任务
 - 修改几处延时为隐性延时
+- Server酱推送
 
 #### 环境
 

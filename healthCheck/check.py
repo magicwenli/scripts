@@ -9,14 +9,17 @@
 ## add logging at 2020/09/04 by magicwenli
 
 
-USERNAME = "" #用户名
+USERNAME = ""  #用户名
 PASSWORD = ""  #密码
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-import time,random,logging,os
+import time,random,logging,os,requests
 
+url="https://sc.ftqq.com/YOUR——SCKEY.send"
+# 在Server酱官网获取SCKEY
+temperature=0
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 cpath=os.path.dirname(os.path.realpath(__file__))+"\\check.log"
@@ -25,9 +28,6 @@ print(cpath)
 logging.basicConfig(filename=cpath,filemode='a',level=logging.INFO,format=LOG_FORMAT)
 
 option = webdriver.ChromeOptions()
-#option.add_argument('--headless')  #设置为headless mode，win平台下调试的时候注释这行
-#option.add_argument('--no-sandbox') #Linux下root权限运行，win平台下调试的时候注释这行
-#option.add_argument('--window-size=1920,1080') #headless模式下指定窗口大小，win平台下调试的时候注释这行
 capabilities = DesiredCapabilities.CHROME
 capabilities['goog:loggingPrefs'] = { 'browser':'ALL' } #设置浏览器log读取等级
 driver = webdriver.Chrome(desired_capabilities=capabilities,options=option)
@@ -47,20 +47,17 @@ def user_login(account,password,url):
 ##健康报打卡操作
 def daka():
     driver.implicitly_wait(3)
-    ##driver.find_element_by_link_text(u'本科生每日健康状况填报').click()
-    ##driver.find_element_by_xpath('//*[@id="form"]/div[2]/div/ul[1]/li[2]/div/a').click()
     driver.switch_to.frame(driver.find_element_by_xpath('//*[@id="mini-17$body$2"]/iframe')) #进入页面主框架
     driver.switch_to.frame(1) #进入二级框架
     driver.find_element_by_xpath('//*[text()="本科生每日健康状况填报"]').click() #更新-尽量避免使用index确定按钮位置
-    ##driver.execute_script('document.getElementsByClassName("service-hall-box-top-hover")[1].click()') #执行JavaScript点击“本科生每日健康状况填报”按钮
     time.sleep(3)
     driver.switch_to.default_content() #回退到页面主框架外
     driver.switch_to.frame(driver.find_element_by_xpath('//*[@id="mini-17$body$3"]/iframe')) #进入标签页框架
     driver.find_element_by_xpath('//*[text()="每日健康填报"]').click() #调试使用“漏填健康日报补录”，调试结束后改为“每日健康填报”
-    ##driver.execute_script('document.getElementsByClassName("bl-item bl-link active")[0].click()') #js点击“每日健康填报”按钮（按钮位置index可能改变）
     time.sleep(5)
     if checkDakaStat():
         logging.info('今日已打卡，无需重复')
+
     else:
         ##开始打卡-todo
         driver.switch_to.default_content() #回退到页面主框架外
@@ -69,12 +66,14 @@ def daka():
         ##Step1 选择绿码选项
         driver.find_element_by_css_selector('[value="绿色"]').click() #调试结束改为绿色！！
         ##Step2 填入自动生成的体温数值
-        driver.find_element_by_name('BRTW').send_keys(fakeTemperature())
+        temperature=fakeTemperature()
+        driver.find_element_by_name('BRTW').send_keys(temperature)
         ##Step3 点击提交
         driver.switch_to.parent_frame() #退出到表格二级框架外
         driver.execute_script('document.getElementById("sendBtn").click()') #js点击提交按钮
         driver.find_element_by_xpath('//*[text()="确定"]').click() #操控点击确定按钮
         ## **在每个打卡时间段结束前1小时可以进行一个遍历检查，console.log返回“每天仅可填报一次，请勿重复！”即可判断自动填报成功
+       
 
 ##自动生成36.0-36.9度之间的一个体温数值
 def fakeTemperature():
@@ -93,6 +92,18 @@ def checkDakaStat():
                 return True
     return False
 
+def ServerPush():
+    if temperature!=0:
+        text="健康每日报已打卡，生成温度："+temperature+" 度"
+        desp=time.strftime('%m月%d日 %H:%M:%S',time.localtime(time.time()))+" 健康每日报已打卡，自动生成温度："+ temperature +" 度"
+    else:
+        text="今日已打卡，无需重复"
+        desp=time.strftime('%m月%d日 %H:%M:%S',time.localtime(time.time()))+" 健康每日报已打卡，无需重复"
+    time.sleep(1)
+    parms={"text":text,"desp":desp}
+    res=requests.get(url=url,params=parms)
+    logging.info("Server酱推送完成")
+
 
 ##main
 def main():
@@ -104,9 +115,9 @@ def main():
     daka()
     logging.info("提交完成")
     time.sleep(1)
+    ServerPush()
+    
     driver.quit()
-    #cookies = driver.get_cookies()  #获取cookies，调试语句，正式上线时注释
-    #print(cookies)
 
 if __name__ == '__main__':
     main()
