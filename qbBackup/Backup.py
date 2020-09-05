@@ -1,6 +1,6 @@
 # QBittorrent Backup 
-# Version 0.1
-# By magicwenli
+# Version 0.2
+# By magicwenli @ github
 
 import os,datetime,logging,shutil
 
@@ -10,7 +10,7 @@ localAppdata=os.getenv("LOCALAPPDATA")+"\\qBittorrent"
 
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 currPath = os.path.dirname(os.path.realpath(__file__))
-backupPath = os.path.join(os.path.dirname(os.path.realpath(__file__)),"backups")
+backupPath = os.path.join(currPath,"backups")
 logPath = currPath + "\\backup.log"
 logging.basicConfig(filename=logPath,filemode='a',level=logging.INFO,format=LOG_FORMAT)
 
@@ -41,8 +41,10 @@ def backup():
         shutil.copytree(localAppdata,destLocal)
     except IOError as e:
         logging.warning("无法复制目标文件夹")
+        exit(1)
     except :
         logging.warning("复制出错")
+        exit(1)
 
 def mtime(dirName):
     dirpath=os.path.join(backupPath,dirName)
@@ -55,12 +57,21 @@ def delEarliest():
     # print(items)
     logging.info("当前最大备份数："+str(maxBackups))
     while len(items)>maxBackups:
-        logging.warning("正在删除备份，名称："+items[-1])
         dirpath=os.path.join(backupPath,items[-1])
-        shutil.rmtree(dirpath)
+        cmdComand='rd /s /q '+dirpath
+        try:
+            logging.warning("开始删除备份，名称：" + items[-1])
+            # shutil.rmtree(dirpath)
+            # os.system('cd /d %~dp0')
+            os.system(cmdComand)
+            items.pop()
+        except IOError as e:
+            logging.warning("无法删除目标文件夹")
+            exit(1)
+        except:
+            logging.warning("删除出错")
+            exit(1)
 
-
-    
 
 if __name__== "__main__":
     if not checkConfig():
@@ -68,6 +79,7 @@ if __name__== "__main__":
         exit(1)
     backup()
     delEarliest()
-    logging.info("备份完成")
+    logging.info("备份完成，最新备份的是"+target)
+    logging.info("************************************")
     exit(0)
     
