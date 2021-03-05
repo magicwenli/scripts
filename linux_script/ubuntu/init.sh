@@ -1,4 +1,4 @@
-#!bin/sh
+#!bin/bash
 
 # some code from https://github.com/Gstalker/Auto-init-your-ubuntu18/blob/master/init_your_ubuntu.sh
 
@@ -60,10 +60,10 @@ success_git=$(command_check git)
 # install fish
 sudo apt -y install fish
 success_fish=$(command_check fish)
-echo 'fish' >> ~/.bashrc
-destDir="~/.config/fish"
-if [ ! -d "$destDir" ]; then
-  mkdir -p "$destDir"
+
+destDir="${HOME}/.config/fish/"
+if [ ! -d $destDir ]; then
+  mkdir -p $destDir
 fi
 sudo cp ./conf/config.fish $destDir
 
@@ -71,7 +71,7 @@ sudo cp ./conf/config.fish $destDir
 sudo apt -y install tmux
 cp ./conf/.tmux.conf ~/
 tmux source-file ~/.tmux.conf
-echo 'tmux' >> $destDir/config.fish
+
 
 # curl
 sudo apt -y install curl
@@ -82,7 +82,11 @@ sudo apt -y install net-tools
 success_net_tools=$(command_check ifconfig)
 
 # docker
-curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+read -r -p "Install Docker? [Y/n] " input
+
+case $input in
+    [yY][eE][sS]|[yY])
+      curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 sudo cat > /etc/docker/daemon.json << EOF
 {
     "registry-mirrors" : [
@@ -97,17 +101,43 @@ EOF
 sudo usermod -aG docker "${USER}"
 sudo systemctl restart docker
 sudo chmod a+rw /var/run/docker.sock
+    ;;
+
+    [nN][oO]|[nN])
+    echo "Escape installing Docker"	
+    ;;
+
+    *)
+    echo "Invalid input..."
+    ;;
+esac
+
 
 # run v2raya
+
+read -r -p "Install V2rayA? [Y/n] " input
+
+case $input in
+    [yY][eE][sS]|[yY])
 docker run -d \
-	--restart=always \
-	--privileged \
-	--network=host \
-	--name v2raya \
-	-v /etc/resolv.conf:/etc/resolv.conf \
-	-v /etc/v2raya:/etc/v2raya \
-	mzz2017/v2raya
-  # With V2RayA service running, visit the port 2017 to enjoy it (such as http://localhost:2017).
+ --restart=always \
+ --privileged \
+ --network=host \
+ --name v2raya \
+ -v /etc/resolv.conf:/etc/resolv.conf \
+ -v /etc/v2raya:/etc/v2raya \
+ mzz2017/v2raya
+    echo "With V2RayA service running, visit the port 2017 to enjoy it (such as http://localhost:2017)."
+    ;;
+
+    [nN][oO]|[nN])
+    echo "Escape installing Docker"	       	
+    ;;
+
+    *)
+    echo "Invalid input..."
+    ;;
+esac
 
 # install vim
 sudo apt -y install vim
